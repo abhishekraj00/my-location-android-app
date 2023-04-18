@@ -1,65 +1,36 @@
-import { NavigationContainer, RouteProp } from "@react-navigation/native";
-import {
-  createBottomTabNavigator,
-  BottomTabNavigationOptions,
-} from "@react-navigation/bottom-tabs";
-import {
-  LocationDataProp,
-  LocationsContext,
-} from "./app/utils/userLocationContext";
-import { Ionicons } from "@expo/vector-icons";
-import React, { useState } from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { LocationsContext } from "./app/utils/userLocationContext";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import React, { useContext, useState } from "react";
 import LocationListScreen from "./app/screens/LocationListScreen";
 import LocationMapScreen from "./app/screens/LocationMapScreen";
 
-type BottomTabScreenOptions = {
-  route: RouteProp<Record<string, object | undefined>, string>;
-  focused: boolean;
-  color: string;
-  size: number;
-};
-
 export default function App() {
-  const [locations, setLocations] = useState<LocationDataProp[]>([]);
+  const { locations: initialLocations } = useContext(LocationsContext);
+  const [locations, setLocations] = useState(initialLocations);
   const Tab = createBottomTabNavigator();
-
-  const tabBarOptions = {
-    tabBarActiveTintColor: "#fff",
-    tabBarInactiveTintColor: "#ccc",
-    tabBarStyle: [
-      {
-        display: "flex",
-      },
-      null,
-    ],
-  };
-
-  const screenOptions = ({
-    route,
-    focused,
-  }: BottomTabScreenOptions): BottomTabNavigationOptions => ({
-    tabBarIcon: () => {
-      let iconName = focused ? "ios-" : "ios-";
-      switch (route.name) {
-        case "Home":
-          iconName += "home";
-          break;
-        case "Map":
-          iconName += "map";
-          break;
-        default:
-          iconName = "ios-help-circle";
-      }
-      return <Ionicons name={iconName} size={40} color={"black"} />;
-    },
-  });
 
   return (
     <LocationsContext.Provider value={{ locations, setLocations }}>
       <NavigationContainer>
         <Tab.Navigator
-          tabBarOptions={tabBarOptions}
-          screenOptions={screenOptions}
+          screenOptions={({ route }) => ({
+            tabBarIcon: ({ color, size }) => {
+              let iconName;
+
+              if (route.name === "Home") {
+                iconName = "home";
+              } else if (route.name === "Map") {
+                iconName = "map";
+              }
+
+              // You can return any component that you like here!
+              return <Ionicons name={iconName} size={size} color={color} />;
+            },
+            tabBarActiveTintColor: "black",
+            tabBarInactiveTintColor: "gray",
+          })}
         >
           <Tab.Screen name="Home" component={LocationListScreen} />
           <Tab.Screen name="Map" component={LocationMapScreen} />

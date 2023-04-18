@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import React, { useContext, useState, useEffect } from "react";
 import useGeolocation from "../hooks/useGeolocation";
 import { LocationsContext } from "../utils/userLocationContext";
@@ -47,7 +47,7 @@ const LocationListScreen = () => {
   }, [location, locations]);
 
   useEffect(() => {
-    const INTERVAL_DURATION = 60 * 1000;
+    const INTERVAL_DURATION = 1000;
 
     if (currentLocation) {
       const intervalId = setInterval(async () => {
